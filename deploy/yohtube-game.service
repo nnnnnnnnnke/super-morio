@@ -1,0 +1,16 @@
+[Unit]
+Description=Super Morio resident game server (gevent, 60Hz authoritative loop)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/yohtube/app
+Environment=YOHGAME_BIND=127.0.0.1:5001
+ExecStart=/usr/bin/python3 /opt/yohtube/app/gamerun.py
+Restart=always
+RestartSec=3
+# ワーカーは1つ。状態をプロセス内に持つので分裂させないこと。
+
+[Install]
+WantedBy=multi-user.target
