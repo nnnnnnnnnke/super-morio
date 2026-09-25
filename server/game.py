@@ -368,8 +368,6 @@ def _enter_stage(s, idx):
     s["jumps"] = 0
     s["st_start"] = time.time()
     s["st_deaths"] = 0
-    s["st_rtt"] = []                 # このステージを遊んだ間の往復遅延 (gamesrv が約0.5秒ごとに足す)
-    s["st_net"] = []                 # 同じく、そのときの経路の名前
     s["items"] = []
     s["crumbles"] = [{"ph": 0, "t": 0} for _ in st.get("crumble", [])]
     s["plants"] = [{"pi": i, "ph": "hidden", "t": PLANT_HIDE_F, "off": 0.0}
@@ -495,16 +493,9 @@ def _stage_result(s, st):
         rank = "B"
     else:
         rank = "C"
-    rtts = sorted(s.get("st_rtt") or [])
-    nets = [n for n in s.get("st_net") or [] if n]
     s["result"] = {"stage": s["stage"], "rank": rank, "time": t,
-                   "coins": got, "coins_total": tot, "deaths": d,
-                   # ランキングに添える「このステージを遊んだ間の遅延」(中央値。測れていなければ None) と、
-                   # いちばん長く使っていた経路の名前 (途中で経路が直っても、遅い経路で遊んだ記録を取り違えない)
-                   "rtt": rtts[len(rtts) // 2] if rtts else None,
-                   "net": max(set(nets), key=nets.count) if nets else None}
+                   "coins": got, "coins_total": tot, "deaths": d}
     s["result_t"] = RESULT_F
-    s["results_n"] = s.get("results_n", 0) + 1     # gamesrv がランキングへ送る合図
 
 
 def _respawn(s):
